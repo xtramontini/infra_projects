@@ -1,0 +1,36 @@
+
+#We use the subprocess module to ping the IP address and the “re” module to check the successful ping. We use “Popen” and “PIPE” functions from the subprocess module.
+
+from re import findall
+from subprocess import Popen, PIPE
+
+#Then, we create a function as “ping”. We enter 2 parameters as host as the IP address of nodes which is a list, and we also specify the ping count as an integer.
+def ping (host,ping_count):
+
+#nside the function, we call each ip address in a for loop. We create a data variable as a string, and we will put all outputs to this variable later. Then, we create an output variable and call the “Popen” function. Inside, we write the ping command. “-n” to define the ping packet count. We add “stdout” and encoding parameters to display all outputs in utf-8 format.
+    
+    for ip in host:
+        data = ""
+        output= Popen(f"ping {ip} -n {ping_count}", stdout=PIPE, encoding="utf-8")
+
+#We create an inner for loop. We get each line of the “output.stdout” into the “data” variable. To find the “TTL” word in the output, we call the findall function from the “re” module. Because, in the successful ping test, a TTL value is shown in the output. The “TTL — Time to Live” value defines the packet life.
+        
+
+        for line in output.stdout:
+            data = data + line
+            ping_test = findall("TTL", data)
+
+
+#You can add “print (data)” outside of the above loop to see the whole ping output.
+
+Optionally, we can check the successful and failed pings with the “if” condition. If the “ping_test” variable has a value whose ping is a success, we can print a successful ping. Otherwise, we can print a failed ping process.
+
+        if ping_test:
+            print(f"{ip} : Successful Ping")
+        else:
+            print(f"{ip} : Failed Ping")
+
+#In the end, we can call our function. We can define the 1st parameter as a list and call the function “nodes”. We describe the total ping packets as 3.
+nodes = ["8.8.8.8", "20.20.20.50", "facebook.com", "192.168.1.20"]
+
+ping(nodes,3)
